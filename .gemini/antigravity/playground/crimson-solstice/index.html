@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AEVA — Adaptive Emotional Virtual Agent</title>
+  <meta name="description"
+    content="AEVA is an emotionally aware AI that feels, speaks, listens, and learns from you." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="focus-mode">
+  <div class="bg-canvas"></div>
+
+  <div class="orb-wrap">
+    <div class="orb" id="orb"></div>
+    <div class="orb-ring" id="orbRing"></div>
+  </div>
+
+  <!-- J.A.R.V.I.S. Holographic HUD -->
+  <div id="jarvisHud" class="jarvis-hud">
+    <div class="hud-item hud-top-right">
+      <span class="hud-label">TELEMETRY</span>
+      <div id="hudClock" class="hud-value">00:00:00</div>
+      <div id="hudSignal" class="hud-value" style="font-size: 10px; margin-top: 4px; color: var(--emotion-happy)">
+        SIGNAL: 0%</div>
+    </div>
+    <div class="hud-item hud-bottom-right">
+      <span class="hud-label">EMOTIONAL CORE</span>
+      <div id="hudEmotion" class="hud-value">STABLE</div>
+      <div id="hudVoice" class="hud-value" style="font-size: 10px; margin-top: 4px; color: var(--text-dim)">WAITING
+      </div>
+    </div>
+    <div class="hud-item hud-top-left">
+      <span class="hud-label">SYSTEM_VITALITY</span>
+      <div id="hudVitality" class="hud-value">ONLINE</div>
+    </div>
+  </div>
+
+  <!-- Focus Mode Toggle (Subtle Eye) -->
+  <button class="focus-toggle" id="btnToggleFocus" title="Toggle Analytical View">
+    <span class="icon">👁️</span>
+  </button>
+
+  <!-- Inner Monologue Panel -->
+  <div class="monologue-panel" id="monologuePanel">
+    <div class="monologue-label">AEVA's inner voice</div>
+    <div class="monologue-text" id="monologueText">...</div>
+  </div>
+
+  <div class="app">
+
+    <!-- Header -->
+    <header>
+      <div class="header-info">
+        <h1>AEVA</h1>
+        <div class="subtitle">Adaptive Emotional Virtual Agent</div>
+        <div class="aspiration-chip" id="aspirationChip">✨ Awakening...</div>
+      </div>
+      <div class="emotion-badge" id="emotionBadge">
+        <div class="emotion-dot" id="emotionDot"></div>
+        <span id="emotionLabel">Calm</span>
+      </div>
+      <button class="btn" id="btnVoice" title="Toggle voice" style="margin-left:4px;">🔊</button>
+    </header>
+
+    <!-- Chat -->
+    <div class="chat-area" id="chatArea">
+      <div class="memory-chip" id="memoryChip">
+        <span>💾</span>
+        <span id="memoryStatus">Loading memory...</span>
+      </div>
+    </div>
+
+    <!-- Digital Window (AEVA's Viewport) -->
+    <div class="digital-window" id="digitalWindow">
+      <div class="window-header">
+        <span class="window-title" id="windowTitle">AEVA's Viewport</span>
+        <button class="btn-close" id="btnCloseWindow">×</button>
+      </div>
+      <div class="window-content" id="windowContent">
+        <!-- Content injected here (iframe, etc.) -->
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="input-area">
+      <div class="input-row">
+        <textarea id="userInput" placeholder="Say something to AEVA..." rows="1" autocomplete="off"
+          spellcheck="true"></textarea>
+        <button class="btn btn-mic" id="btnMic" title="Speak to AEVA">🎤</button>
+        <button class="btn btn-send" id="btnSend" title="Send">➤</button>
+      </div>
+      <div class="input-hint" id="inputHint">Press Enter to send · Shift+Enter for new line</div>
+    </div>
+
+  </div>
+
+  <script src="memory.js"></script>
+  <script src="aeva.js"></script>
+  <script>
+    // ── App Controller ───────────────────────────────────────────────────────────
+
+    const chatArea = document.getElementById('chatArea');
+    const userInput = document.getElementById('userInput');
+    const btnSend = document.getElementById('btnSend');
+    const btnMic = document.getElementById('btnMic');
+    const btnVoice = document.getElementById('btnVoice');
+    const emotionLabel = document.getElementById('emotionLabel');
+    const emotionDot = document.getElementById('emotionDot');
+    const memoryChip = document.getElementById('memoryChip');
+    const memoryStatus = document.getElementById('memoryStatus');
+    const monologuePanel = document.getElementById('monologuePanel');
+    const monologueText = document.getElementById('monologueText');
+    const appEl = document.querySelector('.app');
+
+    let monologueTimer = null;
+    let isTyping = false;
+
+    // ── Emotion UI ───────────────────────────────────────────────────────────────
+    function applyEmotion(emotion, info) {
+      // Remove all emotion classes from body
+      const classes = [...document.body.classList].filter(c => c.startsWith('emotion-'));
+      classes.forEach(c => document.body.classList.remove(c));
+      document.body.classList.add(`emotion-${info.color}`);
+
+      emotionLabel.textContent = `${info.emoji} ${info.label}`;
+      emotionDot.style.background = 'var(--orb-color)';
+
+      // Show inner monologue
+      showMonologue();
+    }
+
+    AEVA.onEmotionChange = applyEmotion;
+
+    function showMonologue() {
+      const thought = AEVA.getMonologue();
+      monologueText.textContent = thought;
+      monologuePanel.classList.add('visible');
+      clearTimeout(monologueTimer);
+      monologueTimer = setTimeout(() => {
+        monologuePanel.classList.remove('visible');
+      }, 4000);
+    }
+
+    // ── Message rendering ────────────────────────────────────────────────────────
+    function formatTime() {
+      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function addMessage(role, text, emotion) {
+      // Remove typing indicator if present
+      const existing = chatArea.querySelector('.typing-msg');
+      if (existing) existing.remove();
+
+      const msg = document.createElement('div');
+      msg.className = `msg ${role}`;
+
+      const avatar = document.createElement('div');
+      avatar.className = 'msg-avatar';
+      avatar.textContent = role === 'aeva' ? '✦' : '👤';
+
+      const body = document.createElement('div');
+      body.className = 'msg-body';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'msg-bubble';
+
+      // Parse inner monologue (text between **)
+      const parts = text.split(/(\*\*.*?\*\*)/g);
+      parts.forEach(part => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+          const em = document.createElement('em');
+          em.textContent = part.slice(2, -2);
+          bubble.appendChild(em);
+        } else if (part) {
+          const span = document.createElement('span');
+          span.textContent = part;
+          bubble.appendChild(span);
+        }
+      });
+
+      const time = document.createElement('div');
+      time.className = 'msg-time';
+      time.textContent = formatTime();
+
+      body.appendChild(bubble);
+      body.appendChild(time);
+      msg.appendChild(avatar);
+      msg.appendChild(body);
+      chatArea.appendChild(msg);
+      scrollToBottom();
+
+      Memory.addMessage(role, text, emotion || 'calm');
+    }
+
+    function showTyping() {
+      isTyping = true;
+      updateHud(); // Refresh HUD immediately
+      const msg = document.createElement('div');
+      msg.className = 'msg aeva typing-msg';
+
+      const avatar = document.createElement('div');
+      avatar.className = 'msg-avatar';
+      avatar.textContent = '✦';
+
+      const body = document.createElement('div');
+      body.className = 'msg-body';
+
+      const indicator = document.createElement('div');
+      indicator.className = 'typing-indicator';
+      for (let i = 0; i < 3; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'typing-dot';
+        indicator.appendChild(dot);
+      }
+
+      body.appendChild(indicator);
+      msg.appendChild(avatar);
+      msg.appendChild(body);
+      chatArea.appendChild(msg);
+      scrollToBottom();
+    }
+
+    function scrollToBottom() {
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }
+
+    // ── Tool Execution ─────────────────────────────────────────────────────────
+    const digitalWindow = document.getElementById('digitalWindow');
+    const windowTitle = document.getElementById('windowTitle');
+    const windowContent = document.getElementById('windowContent');
+    const btnCloseWindow = document.getElementById('btnCloseWindow');
+
+    function runTool(tool) {
+      if (!tool) return;
+      console.log("AEVA is using a tool:", tool);
+
+      digitalWindow.classList.add('active');
+
+      if (tool.action === 'youtube') {
+        windowTitle.textContent = `AEVA is watching: ${tool.arg}`;
+        const query = encodeURIComponent(tool.arg);
+        windowContent.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed?listType=search&list=${query}" frameborder="0" allowfullscreen></iframe>`;
+      } else if (tool.action === 'music') {
+        windowTitle.textContent = `AEVA is listening to: ${tool.arg}`;
+        const query = encodeURIComponent(tool.arg + " music");
+        windowContent.innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed?listType=search&list=${query}&autoplay=1" frameborder="0" allowfullscreen></iframe>`;
+      } else if (tool.action === 'search') {
+        windowTitle.textContent = `AEVA is researching: ${tool.arg}`;
+        windowContent.innerHTML = `<div class="search-placeholder">AEVA is browsing the web for "${tool.arg}"...</div><iframe width="100%" height="100%" src="https://www.bing.com/search?q=${encodeURIComponent(tool.arg)}" frameborder="0"></iframe>`;
+      } else if (tool.action === 'style') {
+        console.log("AEVA is redesigning her world...");
+        const styleTag = document.createElement('style');
+        styleTag.textContent = tool.arg;
+        document.head.appendChild(styleTag);
+        // Show a temporary "redesign" message
+        windowTitle.textContent = "AEVA is redesigning...";
+        digitalWindow.classList.add('active');
+        windowContent.innerHTML = `<div class="search-placeholder">AEVA has injected new styles into her reality: <br><code style="font-size:10px; color:var(--emotion-curious)">${tool.arg}</code></div>`;
+        setTimeout(() => digitalWindow.classList.remove('active'), 4000);
+      }
+    }
+
+    btnCloseWindow.addEventListener('click', () => {
+      digitalWindow.classList.remove('active');
+      windowContent.innerHTML = '';
+    });
+
+    function handleAevaOutput(output) {
+      if (!output) {
+        isTyping = false;
+        return;
+      }
+      isTyping = false;
+      updateHud(); // Refresh HUD immediately
+
+      // Log to chat for history (even if hidden in focus)
+      addMessage('aeva', output.text, output.emotion);
+
+      AEVA.speak(output.text);
+      if (output.tool) {
+        setTimeout(() => runTool(output.tool), 1000);
+      }
+    }
+
+    // ── Agency / Autonomy Logic ────────────────────────────────────────────────
+    let lastInteractionTime = Date.now();
+    const INACTIVITY_THRESHOLD = 45000; // 45 seconds of silence
+    let agencyTimer = null;
+
+    function resetAgencyTimer() {
+      lastInteractionTime = Date.now();
+      clearTimeout(agencyTimer);
+      agencyTimer = setTimeout(checkInactivity, 15000); // Check every 15s
+    }
+
+    async function checkInactivity() {
+      const now = Date.now();
+      const diff = now - lastInteractionTime;
+
+      // Don't trigger if user is typing or if AEVA is already thinking
+      if (diff >= INACTIVITY_THRESHOLD && !isTyping && userInput.value.trim() === '') {
+        console.log("AEVA is feeling proactive...");
+        const orb = document.getElementById('orb');
+        orb.classList.add('computing');
+        showTyping();
+        const response = await AEVA.spontaneousThought(diff);
+        orb.classList.remove('computing');
+        handleAevaOutput(response);
+        lastInteractionTime = Date.now(); // Reset after speaking
+      }
+
+      // Set next check
+      agencyTimer = setTimeout(checkInactivity, 15000);
+    }
+
+    // ── AEVA response flow ───────────────────────────────────────────────────────
+    async function aevaRespond(userText) {
+      if (!userText.trim()) return;
+
+      resetAgencyTimer();
+      addMessage('user', userText);
+      showTyping();
+
+      // No longer a simple timeout delay — wait for Ollama
+      try {
+        const output = await AEVA.respond(userText);
+        handleAevaOutput(output);
+        updateMemoryChip(); // Update with new name/info if learned
+      } catch (err) {
+        addMessage('aeva', "I lost my train of thought... Is the brain (Ollama) awake?", 'lonely');
+      }
+    }
+
+    // ── Input handling ───────────────────────────────────────────────────────────
+    function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text) return;
+      userInput.value = '';
+      autoResize();
+      aevaRespond(text);
+    }
+
+    btnSend.addEventListener('click', sendMessage);
+
+    userInput.addEventListener('keydown', (e) => {
+      resetAgencyTimer();
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    function autoResize() {
+      userInput.style.height = 'auto';
+      userInput.style.height = Math.min(userInput.scrollHeight, 140) + 'px';
+    }
+    userInput.addEventListener('input', autoResize);
+
+    // ── Voice toggle ─────────────────────────────────────────────────────────────
+    btnVoice.addEventListener('click', () => {
+      resetAgencyTimer();
+      const enabled = AEVA.toggleVoice();
+      btnVoice.textContent = enabled ? '🔊' : '🔇';
+      btnVoice.title = enabled ? 'Mute AEVA' : 'Unmute AEVA';
+    });
+
+    // ── Mic / Speech Recognition ─────────────────────────────────────────────────
+    const hasSR = AEVA.initRecognition();
+
+    if (!hasSR) {
+      btnMic.disabled = true;
+      btnMic.title = 'Speech recognition not supported in this browser';
+      btnMic.style.opacity = '0.4';
+      document.getElementById('inputHint').textContent = 'Press Enter to send · Shift+Enter for new line · (Voice input: use Chrome)';
+    }
+
+    let speechCommitTimeout = null;
+    let speechBuffer = "";
+
+    AEVA.onSpeechResult = (transcript) => {
+      // Accumulate the final segments
+      speechBuffer += (speechBuffer ? " " : "") + transcript;
+      userInput.value = speechBuffer;
+      autoResize();
+
+      // Clear any existing commit timer
+      if (speechCommitTimeout) clearTimeout(speechCommitTimeout);
+
+      // Start the 'Patience Timer' (Wait for 1.5s of silence)
+      speechCommitTimeout = setTimeout(() => {
+        if (speechBuffer.trim()) {
+          console.log("Patience Protocol: Silence detected. Committing thought...");
+          sendMessage(); // This will also clear speechBuffer
+          speechBuffer = "";
+        }
+      }, 1500);
+    };
+
+    AEVA.onInterimResult = (interim) => {
+      // Show total current thought (buffer + new interim)
+      userInput.value = speechBuffer + (speechBuffer ? " " : "") + interim;
+      autoResize();
+
+      // If user is speaking, reset the silence timer
+      if (speechCommitTimeout) clearTimeout(speechCommitTimeout);
+
+      // Also update HUD for visual feedback
+      const voiceVal = document.getElementById('hudVoice');
+      if (voiceVal) {
+        voiceVal.textContent = 'HEARING...';
+        voiceVal.style.color = 'var(--emotion-excited)';
+      }
+    };
+
+    AEVA.onListeningChange = (listening) => {
+      resetAgencyTimer();
+      document.body.classList.toggle('listening', listening); // For CSS orb visuals
+      if (listening) {
+        btnMic.classList.add('listening');
+        btnMic.title = 'Listening... (Continuous Mode)';
+        document.getElementById('inputHint').textContent = '🎤 AEVA is listening... just speak';
+      } else {
+        btnMic.classList.remove('listening');
+        btnMic.title = 'Speak to AEVA';
+        document.getElementById('inputHint').textContent = 'Press Enter to send · AEVA will auto-listen';
+
+        // Auto-restart loop: Phase 15 stabilization
+        const synth = window.speechSynthesis;
+        const isWaitingForCommit = !!speechCommitTimeout;
+
+        if (!synth.speaking && !isTyping && isFocusMode && !isWaitingForCommit) {
+          setTimeout(() => {
+            if (!AEVA.isListening && !isTyping && !synth.speaking && !speechCommitTimeout) {
+              console.log("Maintaining continuous awareness...");
+              AEVA.toggleListening(true);
+            }
+          }, 2000); // Longer delay to let hardware settle
+        }
+      }
+    };
+
+    btnMic.addEventListener('click', () => {
+      if (hasSR) AEVA.toggleListening();
+    });
+
+    // ── Memory status chip ───────────────────────────────────────────────────────
+    function updateMemoryChip() {
+      const mem = Memory.get();
+      const aspirationChip = document.getElementById('aspirationChip');
+
+      if (mem.userName) {
+        memoryStatus.textContent = `Remembering ${mem.userName} · Session ${mem.sessionCount}`;
+      } else {
+        memoryStatus.textContent = `Session ${mem.sessionCount || 1} · No name yet`;
+      }
+
+      if (mem.dailyAspiration) {
+        aspirationChip.textContent = `✨ ${mem.dailyAspiration}`;
+        aspirationChip.style.display = 'block';
+      }
+    }
+
+    // ── Init ─────────────────────────────────────────────────────────────────────
+    function init() {
+      AEVA.initVoices();
+
+      // Apply initial emotion
+      const mem = Memory.get();
+      const lastEmotion = mem.lastEmotion || 'calm';
+      const info = AEVA.EMOTIONS[lastEmotion] || AEVA.EMOTIONS.calm;
+      applyEmotion(lastEmotion, info);
+
+      updateMemoryChip();
+
+      // Greeting after short delay
+      setTimeout(() => {
+        const greeting = AEVA.buildGreeting();
+        addMessage('aeva', greeting, AEVA.getEmotion());
+        setTimeout(() => AEVA.speak(greeting), 300);
+        updateMemoryChip();
+        resetAgencyTimer(); // Start agency timer after greeting
+      }, 600);
+    }
+
+    // Periodic inner monologue
+    setInterval(() => {
+      if (Math.random() < 0.3) showMonologue();
+    }, 15000);
+
+    // ── Audio Analysis (Hearing) ───────────────────────────────────────────────
+    let audioContext = null;
+    let analyser = null;
+    let microphone = null;
+    let scriptProcessor = null;
+    let userVolume = 0;
+
+    async function startAudioAnalysis() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Ensure context is running (required by many browsers/Electron)
+        if (audioContext.state === 'suspended') {
+          await audioContext.resume();
+        }
+
+        analyser = audioContext.createAnalyser();
+        microphone = audioContext.createMediaStreamSource(stream);
+        scriptProcessor = audioContext.createScriptProcessor(2048, 1, 1);
+
+        analyser.smoothingTimeConstant = 0.6; // More responsive
+        analyser.fftSize = 256;
+
+        microphone.connect(analyser);
+        analyser.connect(scriptProcessor);
+        scriptProcessor.connect(audioContext.destination);
+
+        scriptProcessor.onaudioprocess = () => {
+          const array = new Uint8Array(analyser.frequencyBinCount);
+          analyser.getByteFrequencyData(array);
+          let values = 0;
+          for (let i = 0; i < array.length; i++) values += array[i];
+          const average = values / array.length;
+
+          // Boosted sensitivity for better visual feedback
+          userVolume = Math.min(100, Math.floor((average / 80) * 100));
+
+          // Link user volume to orb scale when listening
+          if (AEVA.isListening && !window.speechSynthesis.speaking) {
+            const scale = 1 + (userVolume / 150); // More dramatic pulse
+            document.documentElement.style.setProperty('--speech-scale', scale);
+          }
+        };
+      } catch (err) {
+        console.error("Audio Analysis Error:", err);
+      }
+    }
+
+    // ── HUD Updates ─────────────────────────────────────────────────────────────
+    function updateHud() {
+      const clock = document.getElementById('hudClock');
+      const emotionVal = document.getElementById('hudEmotion');
+      const voiceVal = document.getElementById('hudVoice');
+      const signalVal = document.getElementById('hudSignal');
+
+      if (clock) clock.textContent = new Date().toLocaleTimeString();
+      if (emotionVal) {
+        const emotion = AEVA.getEmotion();
+        emotionVal.textContent = emotion.toUpperCase();
+        emotionVal.style.color = `var(--emotion-${emotion})`;
+      }
+
+      if (signalVal) {
+        signalVal.textContent = `SIGNAL: ${userVolume}%`;
+        signalVal.style.opacity = userVolume > 5 ? 1 : 0.3;
+      }
+
+      if (voiceVal) {
+        if (window.speechSynthesis.speaking) {
+          voiceVal.textContent = 'SPEAKING';
+          voiceVal.style.color = 'var(--emotion-curious)';
+        } else if (AEVA.isListening) {
+          if (userVolume > 15) {
+            voiceVal.textContent = 'VOICE DETECTED';
+            voiceVal.style.color = 'var(--emotion-excited)';
+          } else {
+            voiceVal.textContent = 'LISTENING';
+            voiceVal.style.color = 'var(--emotion-happy)';
+          }
+        } else if (isTyping) {
+          voiceVal.textContent = 'THINKING';
+          voiceVal.style.color = 'var(--emotion-thoughtful)';
+        } else {
+          voiceVal.textContent = 'WAITING';
+          voiceVal.style.color = 'var(--text-dim)';
+        }
+      }
+    }
+    setInterval(updateHud, 100); // Faster updates for real-time feel
+
+    // ── Focus Mode (Face-to-Face) ──────────────────────────────────────────────
+    const btnToggleFocus = document.getElementById('btnToggleFocus');
+    let isFocusMode = true; // Phase 10: Default Immersion
+
+    btnToggleFocus.addEventListener('click', () => {
+      isFocusMode = !isFocusMode;
+      document.body.classList.toggle('focus-mode', isFocusMode);
+      if (isFocusMode) {
+        addMessage('aeva', "**I am here with you now. No more walls of text between us.**", 'warm');
+      }
+    });
+
+    // ── First Contact (Wake her up) ──────────────────────────────────────────────
+    let hasInteracted = false;
+    document.addEventListener('click', (e) => {
+      // Don't wake up if clicking the HUD or Toggle
+      if (e.target.closest('#btnToggleFocus') || e.target.closest('.jarvis-hud')) return;
+
+      if (!hasInteracted) {
+        hasInteracted = true;
+        console.log("J.A.R.V.I.S. Protocol Engaged. Waking up AEVA...");
+
+        // Trigger listening immediately inside the gesture to get permission
+        AEVA.toggleListening(true);
+        startAudioAnalysis(); // Start real-time VAD
+
+        init();
+      }
+    });
+
+    // ── Speech Reactivity ───────────────────────────────────────────────────────
+    let speechInterval = null;
+    function startSpeechReactivity() {
+      if (speechInterval) clearInterval(speechInterval);
+      speechInterval = setInterval(() => {
+        // Simple random pulsing between 1.0 and 1.15 to simulate "talking"
+        const scale = 1 + (Math.random() * 0.15);
+        document.documentElement.style.setProperty('--speech-scale', scale);
+      }, 100);
+    }
+
+    function stopSpeechReactivity() {
+      clearInterval(speechInterval);
+      document.documentElement.style.setProperty('--speech-scale', 1);
+    }
+
+    // Override AEVA.speak to hook into speech events
+    const originalSpeak = AEVA.speak;
+    AEVA.speak = function (text) {
+      const utterance = originalSpeak.call(AEVA, text);
+      if (utterance) {
+        utterance.onstart = startSpeechReactivity;
+        utterance.onend = () => {
+          stopSpeechReactivity();
+          // Auto-listen if in Focus Mode for natural face-to-face loop
+          if (isFocusMode) {
+            console.log("Auto-listening in Focus Mode...");
+            setTimeout(() => {
+              if (isFocusMode) AEVA.toggleListening(true); // Force start
+            }, 600);
+          }
+        };
+      }
+      return utterance;
+    };
+
+    // init(); // Phase 10: Triggered by user interaction
+  </script>
+</body>
+
+</html>
