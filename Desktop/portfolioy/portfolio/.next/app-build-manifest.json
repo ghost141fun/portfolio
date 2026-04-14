@@ -1,0 +1,16 @@
+{
+  "pages": {
+    "/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/css-src_components_About_AboutBento_module_css-src_components_Contact_ContactFooter_module_cs-c448ae.css",
+      "static/chunks/app/page.js"
+    ],
+    "/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/css-src_styles_globals_css-src_components_Cursor_Cursor_module_css.css",
+      "static/chunks/app/layout.js"
+    ]
+  }
+}

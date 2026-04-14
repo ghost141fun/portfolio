@@ -1,0 +1,36 @@
+.divider {
+  position: relative;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.line {
+  width: 80%;
+  max-width: 1200px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--gray-mid) 20%,
+    var(--accent) 50%,
+    var(--gray-mid) 80%,
+    transparent 100%
+  );
+  transform-origin: center center;
+  position: relative;
+  z-index: 1;
+}
+
+.glow {
+  position: absolute;
+  width: 40%;
+  max-width: 500px;
+  height: 2px;
+  background: var(--accent);
+  filter: blur(12px);
+  opacity: 0.3;
+  z-index: 0;
+}

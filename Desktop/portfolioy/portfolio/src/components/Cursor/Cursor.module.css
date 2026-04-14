@@ -1,0 +1,81 @@
+.dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  will-change: transform;
+  transition: width 0.3s var(--ease-out-expo), height 0.3s var(--ease-out-expo), background 0.3s ease;
+  box-shadow: 0 0 8px rgba(212, 255, 30, 0.4);
+}
+
+.dot[data-state="hover"] {
+  width: 6px; height: 6px;
+  background: var(--white);
+  box-shadow: 0 0 12px rgba(242, 237, 232, 0.3);
+}
+
+.dot[data-state="view"] {
+  width: 0; height: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.ring {
+  position: fixed;
+  top: 0; left: 0;
+  width: 40px; height: 40px;
+  border: 1px solid rgba(242, 237, 232, 0.25);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+  transition: width 0.4s var(--ease-out-expo), height 0.4s var(--ease-out-expo), border-color 0.3s ease, background 0.4s var(--ease-out-expo);
+}
+
+.ring[data-state="hover"] {
+  width: 64px; height: 64px;
+  border-color: var(--accent);
+  mix-blend-mode: difference;
+}
+
+.ring[data-state="view"] {
+  width: 100px; height: 100px;
+  background: var(--accent);
+  border-color: var(--accent);
+  mix-blend-mode: normal;
+  box-shadow: 0 0 30px rgba(212, 255, 30, 0.3);
+}
+
+.label {
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 10001;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: var(--black);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  will-change: transform;
+}
+
+/* Trail dots */
+.trail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none;
+  z-index: 9998;
+  will-change: transform;
+}
+
+@media (hover: none) {
+  .dot, .ring, .label, .trail { display: none; }
+}

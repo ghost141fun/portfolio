@@ -1,0 +1,224 @@
+.wrap {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 8000;
+}
+
+.trigger {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(17, 17, 17, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 255, 30, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: none;
+  transition: all 0.4s var(--ease-out-expo);
+  position: relative;
+}
+
+.trigger:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 24px rgba(212, 255, 30, 0.2);
+  transform: scale(1.1);
+}
+
+.triggerOpen {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.triggerOpen .triggerIcon {
+  filter: none;
+}
+
+.triggerIcon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--black);
+  font-size: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+}
+
+.panel {
+  position: absolute;
+  bottom: 60px;
+  left: 0;
+  width: 300px;
+  background: rgba(12, 12, 12, 0.92);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 20px;
+  opacity: 0;
+  transform: translateY(12px) scale(0.95);
+  pointer-events: none;
+  transition: all 0.4s var(--ease-out-expo);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.panelOpen {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.panelTitle {
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.panelDesc {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--gray-light);
+  text-transform: uppercase;
+}
+
+.liveIndicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.liveDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(212, 255, 30, 0.4); }
+  50% { opacity: 0.6; box-shadow: 0 0 0 5px rgba(212, 255, 30, 0); }
+}
+
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: none;
+  transition: background 0.3s;
+  width: 100%;
+  text-align: left;
+}
+
+.feature:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.featureActive {
+  background: rgba(212, 255, 30, 0.06);
+}
+
+.featureIcon {
+  font-size: 18px;
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.featureText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.featureLabel {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--white);
+  letter-spacing: 0.02em;
+}
+
+.featureDesc {
+  font-size: 10px;
+  color: var(--gray-light);
+  letter-spacing: 0.04em;
+}
+
+.toggle {
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  background: var(--gray);
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+
+.toggleOn {
+  background: var(--accent);
+}
+
+.toggleDot {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--white);
+  transition: transform 0.3s var(--ease-out-expo);
+}
+
+.toggleOn .toggleDot {
+  transform: translateX(16px);
+  background: var(--black);
+}
+
+.panelNote {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 9px;
+  color: var(--gray-light);
+  letter-spacing: 0.04em;
+  text-align: center;
+}
