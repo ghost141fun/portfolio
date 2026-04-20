@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useSensory } from "@/contexts/SensoryContext";
 import styles from "./Hero.module.css";
 import ParticleField from "./ParticleField";
@@ -188,10 +190,7 @@ export default function Hero() {
   };
 
   useEffect(() => {
-    const init = async () => {
-      const gsapMod = await import("gsap");
-      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
-      const gsap = gsapMod.default;
+    const init = () => {
       gsap.registerPlugin(ScrollTrigger);
 
       const tl = gsap.timeline({ delay: 0.2 });
@@ -207,10 +206,10 @@ export default function Hero() {
         .fromTo(metaRef.current, { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 1, ease: "power3.out" }, "-=1.2")
         .fromTo(marqueeRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 }, "-=0.6")
         .fromTo(scrollHintRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }, "-=0.4")
-        .fromTo(gridRef.current, { opacity: 0 }, { opacity: 1, duration: 1.5 }, "-=1.5");
+        .fromTo(gridRef.current, { opacity: 0 }, { opacity: 1, duration: 1.5 }, "-=1.5")
 
       // Animate CyberCore entry
-      gsap.fromTo("#cyber-core", { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 2, ease: "expo.out" }, "-=2");
+        .fromTo("#cyber-core", { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 2, ease: "expo.out" }, "-=2");
 
       // Scroll parallax
       gsap.to(bgRef.current, { scale: 1.15, opacity: 0.15, ease: "none", scrollTrigger: { trigger: sectionRef.current, start: "top top", end: "bottom top", scrub: 1.5 } });

@@ -1,4 +1,7 @@
 import { useEffect } from "react";
+import Lenis from "lenis";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export function useLenis(enabled: boolean) {
   useEffect(() => {
@@ -6,8 +9,7 @@ export function useLenis(enabled: boolean) {
 
     let lenis: any;
 
-    const init = async () => {
-      const { default: Lenis } = await import("lenis");
+    const init = () => {
       lenis = new Lenis({
         duration: 1.4,
         easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -16,10 +18,6 @@ export function useLenis(enabled: boolean) {
         touchMultiplier: 1.5,
       });
 
-      // Integrate with GSAP ScrollTrigger
-      const gsapModule = await import("gsap");
-      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
-      const gsap = gsapModule.default;
       gsap.registerPlugin(ScrollTrigger);
 
       lenis.on("scroll", ScrollTrigger.update);

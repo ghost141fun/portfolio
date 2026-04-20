@@ -181,7 +181,7 @@
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.miniCssF = function(chunkId) {
 /******/ 			// return url for filenames based on template
-/******/ 			return undefined;
+/******/ 			return "static/css/" + chunkId + ".css";
 /******/ 		};
 /******/ 	}();
 /******/ 	
@@ -192,7 +192,7 @@
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "5e274309d52e1959"; }
+/******/ 		__webpack_require__.h = function() { return "efe7256d97f5eace"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/global */
@@ -785,7 +785,23 @@
 /******/ 				createStylesheet(chunkId, fullhref, resolve, reject);
 /******/ 			});
 /******/ 		}
-/******/ 		// no chunk loading
+/******/ 		// object to store loaded CSS chunks
+/******/ 		var installedCssChunks = {
+/******/ 			"webpack": 0
+/******/ 		};
+/******/ 		
+/******/ 		__webpack_require__.f.miniCss = function(chunkId, promises) {
+/******/ 			var cssChunks = {"css-src_components_Robot_Robot_module_css":1};
+/******/ 			if(installedCssChunks[chunkId]) promises.push(installedCssChunks[chunkId]);
+/******/ 			else if(installedCssChunks[chunkId] !== 0 && cssChunks[chunkId]) {
+/******/ 				promises.push(installedCssChunks[chunkId] = loadStylesheet(chunkId).then(function() {
+/******/ 					installedCssChunks[chunkId] = 0;
+/******/ 				}, function(e) {
+/******/ 					delete installedCssChunks[chunkId];
+/******/ 					throw e;
+/******/ 				}));
+/******/ 			}
+/******/ 		};
 /******/ 		
 /******/ 		var oldTags = [];
 /******/ 		var newTags = [];
@@ -831,7 +847,7 @@
 /******/ 		var installedChunks = __webpack_require__.hmrS_jsonp = __webpack_require__.hmrS_jsonp || {
 /******/ 			"webpack": 0,
 /******/ 			"css-src_components_About_AboutBento_module_css-src_components_Contact_ContactFooter_module_cs-c448ae": 0,
-/******/ 			"css-src_styles_globals_css-src_components_Cursor_Cursor_module_css": 0
+/******/ 			"css-src_styles_globals_css-src_components_Cursor_Cursor_module_css-src_components_ScrollProgr-1a8f94": 0
 /******/ 		};
 /******/ 		
 /******/ 		__webpack_require__.f.j = function(chunkId, promises) {
@@ -843,7 +859,7 @@
 /******/ 					if(installedChunkData) {
 /******/ 						promises.push(installedChunkData[2]);
 /******/ 					} else {
-/******/ 						if(!/^(css\-src_(components_About_AboutBento_module_css\-src_components_Contact_ContactFooter_module_cs\-c448ae|styles_globals_css\-src_components_Cursor_Cursor_module_css)|webpack)$/.test(chunkId)) {
+/******/ 						if(/^(app(\/((|_not\-found\/)page|layout)|\-pages\-internals)|_app\-pages\-browser_src_components_Robot_Robot_tsx|main\-app)$/.test(chunkId)) {
 /******/ 							// setup Promise in chunk cache
 /******/ 							var promise = new Promise(function(resolve, reject) { installedChunkData = installedChunks[chunkId] = [resolve, reject]; });
 /******/ 							promises.push(installedChunkData[2] = promise);

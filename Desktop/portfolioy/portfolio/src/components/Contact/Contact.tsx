@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./Contact.module.css";
 
 const SOCIALS = [
@@ -21,10 +23,7 @@ export default function Contact() {
   const [sent, setSent] = useState(false);
 
   useEffect(() => {
-    const init = async () => {
-      const gsapMod = await import("gsap");
-      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
-      const gsap = gsapMod.default;
+    const init = () => {
       gsap.registerPlugin(ScrollTrigger);
 
       // Big headline — dramatic char reveal
@@ -197,8 +196,8 @@ export default function Contact() {
           </h2>
 
           <div ref={emailRef} className={styles.email} style={{ opacity: 0 }}>
-            <a href="mailto:hello@risabghosh.dev" data-cursor="hover" className={styles.emailLink}>
-              hello@risabghosh.dev
+            <a href="mailto:risabghosh12@gmail.com" data-cursor="hover" className={styles.emailLink}>
+              risabghosh12@gmail.com
             </a>
           </div>
 

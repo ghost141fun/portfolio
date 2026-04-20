@@ -1,3 +1,5 @@
+/* ── NAV — AMBIENT LIFE ────────────────────────────────────── */
+
 .nav {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -17,6 +19,7 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
+/* ── LOGO ────────────────────────────────────────────────── */
 .logo {
   display: flex;
   align-items: center;
@@ -34,7 +37,7 @@
   font-size: 14px;
   letter-spacing: 0.05em;
   color: var(--white);
-  transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+  transition: border-color 0.3s, background 0.3s, box-shadow 0.3s, transform 0.4s var(--ease-out-expo);
 }
 
 .logo:hover .logoMark {
@@ -42,6 +45,7 @@
   background: var(--accent);
   color: var(--black);
   box-shadow: 0 0 24px rgba(212, 255, 30, 0.3);
+  transform: rotate(-5deg) scale(1.05);
 }
 
 .logoFull {
@@ -50,8 +54,15 @@
   text-transform: uppercase;
   color: var(--gray-light);
   font-weight: 400;
+  transition: color 0.3s, letter-spacing 0.4s var(--ease-out-expo);
 }
 
+.logo:hover .logoFull {
+  color: var(--white);
+  letter-spacing: 0.12em;
+}
+
+/* ── LINKS ───────────────────────────────────────────────── */
 .links {
   list-style: none;
   display: flex;
@@ -65,11 +76,12 @@
   text-transform: uppercase;
   color: var(--gray-light);
   text-decoration: none;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 16px;
+  align-items: center;
+  gap: 4px;
   transition: color 0.3s;
+  padding-bottom: 4px;
 }
 
 .link:hover { color: var(--accent); }
@@ -79,14 +91,29 @@
   transition: transform 0.4s var(--ease-out-expo);
 }
 
-.link:hover .linkInner:first-child {
-  transform: translateY(-100%);
-}
-.link:hover .linkInner:last-child {
-  transform: translateY(-100%);
+.link:hover .linkInner {
+  transform: translateY(-2px);
 }
 
-.status {
+/* ── ANIMATED UNDERLINE ──────────────────────────────────── */
+.linkUnderline {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  transform: translateX(-50%);
+  transition: width 0.4s var(--ease-out-expo);
+  box-shadow: 0 0 6px rgba(212, 255, 30, 0.3);
+}
+
+.link:hover .linkUnderline {
+  width: 100%;
+}
+
+/* ── SYS INFO ────────────────────────────────────────────── */
+.sysInfo {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -106,12 +133,13 @@
 
 @keyframes pulse {
   0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(212, 255, 30, 0.4); }
-  50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(212, 255, 30, 0); }
+  50% { opacity: 0.7; box-shadow: 0 0 0 8px rgba(212, 255, 30, 0); }
 }
 
+/* ── RESPONSIVE ──────────────────────────────────────────── */
 @media (max-width: 768px) {
   .nav { padding: 20px 24px; }
   .links { gap: 24px; }
-  .status { display: none; }
+  .sysInfo { display: none; }
   .logoFull { display: none; }
 }

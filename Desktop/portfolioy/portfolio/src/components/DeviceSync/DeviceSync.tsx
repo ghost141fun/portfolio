@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useSensory } from "@/contexts/SensoryContext";
+import { useSensory, SyncData } from "@/contexts/SensoryContext";
 import styles from "./DeviceSync.module.css";
 
 /**
@@ -53,18 +53,18 @@ export default function DeviceSync() {
 
           conn.on("open", () => {
             setConnected(true);
-            setSync((prev: any) => ({ ...prev, connected: true }));
+            setSync((prev: SyncData) => ({ ...prev, connected: true }));
           });
 
           conn.on("data", (data: any) => {
             if (data.type === "gyro") {
-              setSync((prev: any) => ({
+              setSync((prev: SyncData) => ({
                 ...prev,
                 connected: true,
                 gyro: data.gyro,
               }));
             } else if (data.type === "touch") {
-              setSync((prev: any) => ({
+              setSync((prev: SyncData) => ({
                 ...prev,
                 connected: true,
                 touch: data.touch,

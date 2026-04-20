@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./About.module.css";
 
 const SKILLS = [
@@ -25,10 +27,7 @@ export default function About() {
   const skillsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const init = async () => {
-      const gsapMod = await import("gsap");
-      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
-      const gsap = gsapMod.default;
+    const init = () => {
       gsap.registerPlugin(ScrollTrigger);
 
       // Headline word-by-word reveal

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import * as THREE from "three";
 
 // We'll read audio data from a global variable set by the sensory context
 // to avoid complex context integration inside a canvas component
@@ -133,12 +134,11 @@ export default function ParticleField() {
 
   useEffect(() => {
     let animId: number;
-    let renderer: any, scene: any, camera: any;
+    let renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera;
     const mouse = { x: 0, y: 0 };
     const materials: any[] = [];
 
-    const init = async () => {
-      const THREE = await import("three");
+    const init = () => {
       const canvas = canvasRef.current!;
 
       renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });

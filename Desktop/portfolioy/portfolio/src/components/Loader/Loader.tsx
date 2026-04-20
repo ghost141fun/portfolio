@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import gsap from "gsap";
 import styles from "./Loader.module.css";
 
 interface LoaderProps {
@@ -19,9 +20,7 @@ export default function Loader({ onComplete }: LoaderProps) {
   useEffect(() => {
     document.body.classList.add("loading");
 
-    const runLoader = async () => {
-      const gsapModule = await import("gsap");
-      const gsap = gsapModule.default;
+    const runLoader = () => {
 
       const counter = counterRef.current!;
       const bar = barRef.current!;

@@ -1,28 +1,30 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./Projects.module.css";
 
 const PROJECTS = [
   {
     id: "01",
-    title: "Luminary",
-    category: "WebGL / Interactive",
+    title: "Codex Teams",
+    category: "SaaS Platform",
     year: "2024",
-    tags: ["Three.js", "GLSL", "React"],
+    tags: ["React", "Node.js", "Socket.io"],
     color: "#d4ff1e",
-    desc: "Immersive 3D product configurator with real-time ray marching and custom PBR shaders.",
-    image: "/images/projects/luminary.png",
+    desc: "A high-fidelity collaborative workspace for engineering teams, featuring real-time communication and workspace management.",
+    image: "/images/projects/codex-teams.png",
   },
   {
     id: "02",
-    title: "Vanta Studio",
-    category: "Creative Direction",
+    title: "Codex Tracking",
+    category: "Project Management",
     year: "2023",
-    tags: ["GSAP", "Next.js", "Motion"],
+    tags: ["Prisma", "PostgreSQL", "Next.js"],
     color: "#ff6b35",
-    desc: "Award-winning agency website featuring fluid layout transitions and scroll-driven storytelling.",
-    image: "/images/projects/vanta.png",
+    desc: "A comprehensive project tracking system with real-time metrics, automated status reporting, and intuitive task management.",
+    image: "/images/projects/codex-tracking.png",
   },
   {
     id: "03",
@@ -36,13 +38,13 @@ const PROJECTS = [
   },
   {
     id: "04",
-    title: "Epoch",
-    category: "Film / Editorial",
-    year: "2022",
-    tags: ["GLSL", "Canvas", "Audio"],
+    title: "Codex Connect",
+    category: "Social Platform",
+    year: "2024",
+    tags: ["Next.js", "Supabase", "Auth"],
     color: "#38bdf8",
-    desc: "Audio-reactive visual experience for a film score, synchronizing shader animations to waveforms.",
-    image: "/images/projects/epoch.png",
+    desc: "A sleek, celestial-themed social discovery platform for developers to connect, share history, and manage team roles.",
+    image: "/images/projects/codex-connect.png",
   },
 ];
 
@@ -58,10 +60,7 @@ export default function Projects() {
   const showcaseRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const init = async () => {
-      const gsapMod = await import("gsap");
-      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
-      const gsap = gsapMod.default;
+    const init = () => {
       gsap.registerPlugin(ScrollTrigger);
 
       // Header dramatic reveal

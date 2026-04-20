@@ -1,3 +1,5 @@
+/* ── CONTACT FOOTER — DRAMATIC FINALE ─────────────────────── */
+
 .footer {
   position: relative;
   min-height: 100vh;
@@ -6,8 +8,84 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow: hidden;
 }
 
+/* ── AURORA GRADIENT ─────────────────────────────────────── */
+.aurora {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(212, 255, 30, 0.02) 20%,
+    rgba(56, 189, 248, 0.015) 40%,
+    rgba(167, 139, 250, 0.01) 60%,
+    rgba(212, 255, 30, 0.02) 80%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── GRID OVERLAY ────────────────────────────────────────── */
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(212, 255, 30, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 255, 30, 0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
+  z-index: 1;
+  animation: gridShift 25s linear infinite;
+}
+
+@keyframes gridShift {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 80px 80px, 80px 80px; }
+}
+
+/* ── PARTICLES ───────────────────────────────────────────── */
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: particleDrift ease-in-out infinite alternate;
+}
+
+@keyframes particleDrift {
+  0% { transform: translateY(0) scale(1); opacity: 0.1; }
+  100% { transform: translateY(-80px) scale(0.4); opacity: 0.4; }
+}
+
+/* ── SCAN LINE ───────────────────────────────────────────── */
+.scanLine {
+  position: absolute;
+  left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(212, 255, 30, 0.2), transparent);
+  z-index: 2;
+  pointer-events: none;
+  animation: scanSweep 6s ease-in-out infinite;
+  box-shadow: 0 0 15px rgba(212, 255, 30, 0.15);
+}
+
+@keyframes scanSweep {
+  0% { top: 0%; opacity: 0; }
+  5% { opacity: 1; }
+  95% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* ── INNER ───────────────────────────────────────────────── */
 .inner {
   width: 100%;
   max-width: 1400px;
@@ -16,42 +94,96 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
+  z-index: 5;
 }
 
+/* ── HEADER ──────────────────────────────────────────────── */
 .header {
   text-align: center;
   align-self: center;
   margin-top: 10vh;
 }
 
+.tag {
+  font-family: monospace;
+  font-size: 10px;
+  color: var(--accent);
+  margin-bottom: 32px;
+  letter-spacing: 0.3em;
+}
+
+/* ── TITLE ───────────────────────────────────────────────── */
 .title {
   font-size: clamp(48px, 8vw, 160px);
   margin-bottom: 64px;
+  overflow: hidden;
+  line-height: 0.95;
 }
 
-.title span {
+.titleLine {
+  display: block;
+  overflow: hidden;
+}
+
+.titleChar {
+  display: inline-block;
+  will-change: transform;
+  transition: text-shadow 0.3s;
+}
+
+.titleChar:hover {
+  text-shadow: 0 0 30px rgba(212, 255, 30, 0.3);
+}
+
+.accentChar {
   color: var(--accent);
+  text-shadow: 0 0 40px rgba(212, 255, 30, 0.2);
 }
 
+/* ── EMAIL ───────────────────────────────────────────────── */
 .email {
+  position: relative;
+  display: inline-block;
   font-family: var(--font-display);
   font-size: clamp(32px, 5vw, 80px);
   color: var(--white);
-  transition: opacity 0.3s;
-  text-decoration: underline;
-  text-decoration-color: var(--accent-dim);
-  text-underline-offset: 12px;
+  transition: all 0.4s var(--ease-out-expo);
+  text-decoration: none;
+  border-bottom: 2px solid var(--accent-dim);
+  padding-bottom: 8px;
 }
 
 .email:hover {
-  opacity: 0.6;
+  color: var(--accent);
+  border-color: var(--accent);
+  letter-spacing: 0.03em;
 }
 
+.emailGlow {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 20px;
+  background: radial-gradient(ellipse, rgba(212, 255, 30, 0.15), transparent 70%);
+  filter: blur(10px);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.email:hover .emailGlow {
+  opacity: 1;
+}
+
+/* ── BOTTOM ──────────────────────────────────────────────── */
 .bottom {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 40px;
-  border-top: 1px solid var(--gray);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
   padding-top: 64px;
 }
 
@@ -62,12 +194,15 @@
 }
 
 .label {
+  font-family: monospace;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: var(--gray-light);
+  color: var(--accent);
+  opacity: 0.6;
 }
 
+/* ── SOCIAL LINKS ────────────────────────────────────────── */
 .links {
   display: flex;
   flex-wrap: wrap;
@@ -75,20 +210,45 @@
 }
 
 .link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 14px;
   color: var(--white);
-  transition: color 0.3s;
+  transition: color 0.3s, gap 0.4s var(--ease-out-expo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-decoration: none;
 }
 
 .link:hover {
   color: var(--accent);
+  gap: 12px;
+}
+
+.linkText {
+  display: inline-block;
+}
+
+.linkArrow {
+  font-size: 12px;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.3s, transform 0.4s var(--ease-out-expo);
+}
+
+.link:hover .linkArrow {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .text {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--gray-light);
+  line-height: 1.6;
 }
 
+/* ── RESPONSIVE ──────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .bottom { grid-template-columns: 1fr; gap: 40px; }
 }

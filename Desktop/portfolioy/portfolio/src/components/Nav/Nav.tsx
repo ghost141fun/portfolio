@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
 import styles from "./Nav.module.css";
 
 const links = [
@@ -11,8 +12,36 @@ const links = [
 
 export default function Nav() {
   const navRef = useRef<HTMLElement>(null);
+  const logoRef = useRef<HTMLAnchorElement>(null);
+  const linksRef = useRef<HTMLUListElement>(null);
+  const sysRef = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
 
+  // ── ENTRY ANIMATION ──
+  useEffect(() => {
+    const nav = navRef.current!;
+    const logo = logoRef.current;
+    const linkEls = linksRef.current?.querySelectorAll("li");
+    const sys = sysRef.current;
+
+    // Set initial invisible state
+    gsap.set([logo, sys], { opacity: 0, y: -20 });
+    if (linkEls) gsap.set(linkEls, { opacity: 0, y: -15 });
+
+    const tl = gsap.timeline({ delay: 2.5 });
+
+    tl.to(logo, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
+
+    if (linkEls) {
+      tl.to(linkEls, {
+        opacity: 1, y: 0, duration: 0.6, ease: "power3.out", stagger: 0.08
+      }, "-=0.5");
+    }
+
+    tl.to(sys, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, "-=0.3");
+  }, []);
+
+  // ── SCROLL BEHAVIOR ──
   useEffect(() => {
     let lastY = 0;
     const nav = navRef.current!;
@@ -41,7 +70,6 @@ export default function Nav() {
       const target = document.querySelector(href.substring(1));
       if (target) target.scrollIntoView({ behavior: "smooth" });
     }
-    // Otherwise, allow normal Next.js Link behavior or direct navigation
   };
 
   return (
@@ -49,12 +77,12 @@ export default function Nav() {
       ref={navRef}
       className={`${styles.nav} ${scrolled ? styles.navScrolled : ""}`}
     >
-      <a href="#" className={styles.logo} data-cursor="hover">
-        <span className={styles.logoMark}>RG</span>
-        <span className={styles.logoFull}>Risab Ghosh</span>
+      <a ref={logoRef} href="#" className={styles.logo} data-cursor="hover">
+        <span className={styles.logoMark}>[RG]</span>
+        <span className={styles.logoFull}>RISAB_GHOSH</span>
       </a>
 
-      <ul className={styles.links}>
+      <ul ref={linksRef} className={styles.links}>
         {links.map((link) => (
           <li key={link.href}>
             <a
@@ -64,17 +92,15 @@ export default function Nav() {
               onClick={(e) => handleNav(e, link.href)}
             >
               <span className={styles.linkInner}>{link.label}</span>
-              <span className={styles.linkInner} aria-hidden="true">
-                {link.label}
-              </span>
+              <span className={styles.linkUnderline} />
             </a>
           </li>
         ))}
       </ul>
 
-      <div className={styles.status}>
+      <div ref={sysRef} className={styles.sysInfo}>
+        <span>v.4.0.0</span>
         <span className={styles.statusDot} />
-        <span>Available for work</span>
       </div>
     </nav>
   );

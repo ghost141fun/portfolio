@@ -4,6 +4,7 @@ import { SensoryProvider } from "@/contexts/SensoryContext";
 import dynamic from "next/dynamic";
 const GlobalCanvas = dynamic(() => import("@/components/GlobalCanvas"), { ssr: false });
 import Cursor from "@/components/Cursor/Cursor";
+import ScrollProgress from "@/components/ScrollProgress/ScrollProgress";
 
 export const metadata: Metadata = {
   title: "Obsidian Noir — Creative Portfolio",
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SensoryProvider>
           <div className="grain" aria-hidden="true" />
           <GlobalCanvas />
+          <ScrollProgress />
           <Cursor />
           {children}
         </SensoryProvider>

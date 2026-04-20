@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, Dispatch, SetStateAction } from "react";
 
 interface HeadPos {
   x: number;
@@ -14,7 +14,7 @@ interface AudioData {
   high: number;
 }
 
-interface SyncData {
+export interface SyncData {
   connected: boolean;
   gyro: { alpha: number; beta: number; gamma: number };
   touch: { x: number; y: number };
@@ -32,9 +32,9 @@ interface SensoryState {
   audio: AudioData;
   sync: SyncData;
   toggleFeature: (key: keyof SensoryState["features"]) => void;
-  setHeadPos: (pos: HeadPos) => void;
-  setAudio: (data: AudioData) => void;
-  setSync: (data: SyncData) => void;
+  setHeadPos: Dispatch<SetStateAction<HeadPos>>;
+  setAudio: Dispatch<SetStateAction<AudioData>>;
+  setSync: Dispatch<SetStateAction<SyncData>>;
 }
 
 const defaults: SensoryState = {

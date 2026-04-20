@@ -1,3 +1,5 @@
+/* ── SECTION DIVIDER — LIVING SEPARATOR ────────────────────── */
+
 .divider {
   position: relative;
   height: 120px;
@@ -7,6 +9,7 @@
   overflow: hidden;
 }
 
+/* ── MAIN LINE ───────────────────────────────────────────── */
 .line {
   width: 80%;
   max-width: 1200px;
@@ -14,9 +17,9 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    var(--gray-mid) 20%,
+    rgba(100, 100, 100, 0.3) 15%,
     var(--accent) 50%,
-    var(--gray-mid) 80%,
+    rgba(100, 100, 100, 0.3) 85%,
     transparent 100%
   );
   transform-origin: center center;
@@ -24,6 +27,7 @@
   z-index: 1;
 }
 
+/* ── GLOW ────────────────────────────────────────────────── */
 .glow {
   position: absolute;
   width: 40%;
@@ -33,4 +37,68 @@
   filter: blur(12px);
   opacity: 0.3;
   z-index: 0;
+  animation: glowPulse 4s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.15; filter: blur(12px); }
+  50% { opacity: 0.5; filter: blur(20px); }
+}
+
+/* ── TRAVELING PULSE ─────────────────────────────────────── */
+.pulse {
+  position: absolute;
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  border-radius: 2px;
+  z-index: 2;
+  filter: blur(1px);
+  box-shadow: 0 0 20px rgba(212, 255, 30, 0.5), 0 0 40px rgba(212, 255, 30, 0.2);
+}
+
+/* ── LINE PARTICLES ──────────────────────────────────────── */
+.particleRow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.lineParticle {
+  position: absolute;
+  top: 50%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--accent);
+  transform: translateY(-50%);
+  animation: particleBreathe 3s ease-in-out infinite alternate;
+  box-shadow: 0 0 6px rgba(212, 255, 30, 0.4);
+}
+
+@keyframes particleBreathe {
+  0% { opacity: 0.2; transform: translateY(-50%) scale(0.8); }
+  100% { opacity: 0.8; transform: translateY(-50%) scale(1.4); }
+}
+
+/* ── EDGE MARKERS ────────────────────────────────────────── */
+.edgeL,
+.edgeR {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 6px;
+  color: var(--accent);
+  opacity: 0.2;
+  z-index: 2;
+  animation: edgePulse 3s ease-in-out infinite;
+}
+
+.edgeL { left: 8%; }
+.edgeR { right: 8%; }
+
+@keyframes edgePulse {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.5; }
 }

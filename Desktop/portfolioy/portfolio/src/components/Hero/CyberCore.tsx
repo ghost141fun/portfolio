@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import * as THREE from "three";
 
 const VERTEX_SHADER = `
   uniform float uTime;
@@ -109,8 +110,7 @@ export default function CyberCore() {
     let renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera;
     let core: THREE.Mesh, outer: THREE.Mesh;
 
-    const init = async () => {
-      const THREE = await import("three");
+    const init = () => {
       
       const canvas = canvasRef.current!;
       renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });

@@ -1,121 +1,161 @@
 /*!*********************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[7].use[3]!./src/components/Robot/Robot.module.css ***!
   \*********************************************************************************************************************************************************************************************************************************************************************************/
-.Robot_container__6Hmzw {
+.Robot_robotWrapper__f2hWe {
   position: relative;
-  width: 100vw;
-  height: 100vh;
-  background: radial-gradient(circle at center, #111 0%, #060606 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.Robot_robotWrap__TWTu4 {
-  width: 800px;
-  height: 800px;
-  border-radius: 50%;
-  box-shadow: 0 0 100px rgba(212, 255, 30, 0.05);
+.Robot_robotWrapper__f2hWe.Robot_hovered__EeHKM {
+  transform: scale(1.03);
 }
 
+/* Speech bubble */
 .Robot_bubble__TQYmh {
   position: absolute;
-  top: 15%;
-  right: 15%;
-  padding: 24px 32px;
-  background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(15px);
-          backdrop-filter: blur(15px);
-  border: 1px solid var(--glass-border);
-  border-left: 4px solid var(--accent);
-  color: var(--white);
-  font-family: var(--font-body);
-  font-size: 18px;
-  max-width: 320px;
-  border-radius: 4px 24px 24px 24px;
-  animation: Robot_floatBubble__ajk61 4s ease-in-out infinite;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  top: -10px;
+  right: calc(100% + 18px);
+  width: 220px;
+  background: rgba(10, 10, 10, 0.92);
+  border: 1px solid rgba(212, 255, 30, 0.4);
+  padding: 14px 16px;
+  z-index: 20;
+  opacity: 0;
+  transform: translateX(12px) scale(0.92);
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  -webkit-backdrop-filter: blur(16px);
+          backdrop-filter: blur(16px);
+  box-shadow: 0 0 30px rgba(212, 255, 30, 0.08), inset 0 0 20px rgba(212, 255, 30, 0.02);
 }
 
-@keyframes Robot_floatBubble__ajk61 {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+.Robot_bubbleVisible___vQKL {
+  opacity: 1;
+  transform: translateX(0) scale(1);
 }
 
-.Robot_msg__zQj9N {
-  display: inline-block;
-  min-height: 1.5em;
-}
-
-.Robot_cursor__xG0K4 {
-  display: inline-block;
-  width: 2px;
-  height: 1.2em;
-  background: var(--accent);
-  margin-left: 2px;
-  animation: Robot_blink__d_nAy 0.8s infinite;
-  vertical-align: middle;
-}
-
-@keyframes Robot_blink__d_nAy {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-.Robot_backBtn__F2oVe {
-  position: absolute;
-  top: 40px;
-  left: 48px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--gray-light);
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  transition: color 0.3s;
-  z-index: 10;
-}
-
-.Robot_backBtn__F2oVe:hover {
+.Robot_bubbleText__hJw_J {
+  font-family: var(--font-display);
+  font-size: 13px;
   color: var(--accent);
+  letter-spacing: 0.1em;
+  line-height: 1.3;
+  margin-bottom: 6px;
 }
 
-.Robot_backArrow__FHzDu {
-  width: 16px;
-  height: 16px;
-  stroke: currentColor;
+.Robot_bubbleSub__p1GU7 {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.05em;
+  line-height: 1.5;
 }
 
-/* Entertainment controls */
-.Robot_controls__qY2gu {
+.Robot_bubbleTail__P7I1b {
   position: absolute;
-  bottom: 60px;
+  right: -7px;
+  top: 22px;
+  width: 13px;
+  height: 13px;
+  background: rgba(10, 10, 10, 0.92);
+  border-right: 1px solid rgba(212, 255, 30, 0.4);
+  border-top: 1px solid rgba(212, 255, 30, 0.4);
+  transform: rotate(45deg);
+}
+
+/* Scan lines overlay */
+.Robot_scanLines__y8GTG {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(212, 255, 30, 0.015) 2px,
+    rgba(212, 255, 30, 0.015) 4px
+  );
+  pointer-events: none;
+  z-index: 10;
+  animation: Robot_scanMove__2wZUD 8s linear infinite;
+}
+
+@keyframes Robot_scanMove__2wZUD {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100px; }
+}
+
+/* HUD rings */
+.Robot_hudRing__tP4Wk {
+  position: absolute;
+  inset: 5%;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 255, 30, 0.06);
+  pointer-events: none;
+  z-index: 5;
+  animation: Robot_hudRotate__MGrrq 12s linear infinite;
+}
+
+.Robot_hudRing2__sWfim {
+  position: absolute;
+  inset: 15%;
+  border-radius: 50%;
+  border: 1px dashed rgba(212, 255, 30, 0.04);
+  pointer-events: none;
+  z-index: 5;
+  animation: Robot_hudRotate__MGrrq 20s linear infinite reverse;
+}
+
+@keyframes Robot_hudRotate__MGrrq {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Corner markers */
+.Robot_corner__FBU1j {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+  z-index: 15;
+  opacity: 0.5;
+}
+
+.Robot_corner__FBU1j[data-pos="tl"] { top: 8px; left: 8px; border-top: 1px solid var(--accent); border-left: 1px solid var(--accent); }
+.Robot_corner__FBU1j[data-pos="tr"] { top: 8px; right: 8px; border-top: 1px solid var(--accent); border-right: 1px solid var(--accent); }
+.Robot_corner__FBU1j[data-pos="bl"] { bottom: 8px; left: 8px; border-bottom: 1px solid var(--accent); border-left: 1px solid var(--accent); }
+.Robot_corner__FBU1j[data-pos="br"] { bottom: 8px; right: 8px; border-bottom: 1px solid var(--accent); border-right: 1px solid var(--accent); }
+
+/* Status bar */
+.Robot_statusBar__BWc87 {
+  position: absolute;
+  bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 24px;
-}
-
-.Robot_btn__S2pYT {
-  padding: 12px 24px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 10px;
-  letter-spacing: 0.1em;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-size: 8px;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--gray-light);
-  transition: all 0.3s;
+  color: rgba(212, 255, 30, 0.5);
+  z-index: 15;
+  white-space: nowrap;
 }
 
-.Robot_btn__S2pYT:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+.Robot_statusDot__KnWOw {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: Robot_dotPulse__ByQZT 1.5s ease-in-out infinite;
 }
 
-@media (max-width: 768px) {
-  .Robot_robotWrap__TWTu4 { width: 100%; height: 100%; }
-  .Robot_bubble__TQYmh { top: 10%; left: 24px; right: 24px; max-width: none; }
-  .Robot_backBtn__F2oVe { top: 24px; left: 24px; }
+@keyframes Robot_dotPulse__ByQZT {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.6); }
 }
 
